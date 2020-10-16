@@ -1,1 +1,15 @@
+Idea for ISING class:
 
+```
+class ISING:
+    get_state():
+    update():
+    set_params(temperature, field, connection_strength):
+    get_params():
+```
+Idea of game:
+ * lvling up is possible
+ * goal is to reproduce given spin combination in the centre
+ * starts with task to align one spin, first up then down,
+ then 2, and so on
+ * this makes for increasing complexity
