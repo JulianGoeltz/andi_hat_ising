@@ -20,10 +20,10 @@ Idea of game:
 
 ## Getting started
 Install the packages with pip
-´´´bash
+```bash
 pip install .
-´´´
+```
 And run the tests to check if the installation has worked
-´´´bash
+```bash
 nosetests
-´´´
+```
