@@ -14,6 +14,9 @@ Idea of game:
  then 2, and so on
  * this makes for increasing complexity
 
+## Worklflow Badges
+![Python test](https://github.com/JulianGoeltz/andi_hat_ising/workflows/Python%20tests/badge.svg)
+![Python codestyle](https://github.com/JulianGoeltz/andi_hat_ising/workflows/Python%20codestyle/badge.svg)
 
 ## Getting started
 Install the packages with pip
