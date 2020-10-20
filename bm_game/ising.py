@@ -102,12 +102,14 @@ class IsingModel:
         """
 
         # First update the reds, that is the odd ones
+        # pylint: disable=maybe-no-member
         energies = special.expit((np.dot(self.connection_matrix, self.states) +
                                   self.bias)/self.temp)
         rand = np.random.rand(self.n**2)
         self.states[self.reds] = (rand < energies)[self.reds]
 
         # First update the blacks
+        # pylint: disable=maybe-no-member
         energies = special.expit((np.dot(self.connection_matrix, self.states) +
                                   self.bias)/self.temp)
         rand = np.random.rand(self.n**2)
