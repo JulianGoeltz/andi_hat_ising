@@ -19,11 +19,11 @@ if __name__ == '__main__':
     iteration = 0
     while True:
         iteration += 1
-        print(f"start of loop {iteration}")
+        # print(f"start of loop {iteration}")
         states = Ising.get_rectangular_states()
         display.update(states)
         Ising.update()
         time.sleep(1)
 
-        if iteration == 10:
+        if iteration == 1000:
             sys.exit()

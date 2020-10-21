@@ -5,7 +5,7 @@ import pygame
 
 
 WHITE = (255, 255, 255)
-PIXEL_PER_SPIN = 80
+PIXEL_PER_SPIN = 25
 
 
 class Display:
@@ -29,7 +29,7 @@ class Display:
             y (int): gamefield size y-axes
         """
         self.size_field = np.array([x, y])
-        self.size_window = PIXEL_PER_SPIN * self.size_field + np.array([30, 0])
+        self.size_window = 320, 240  # PIXEL_PER_SPIN * self.size_field + np.array([30, 0])
 
         pygame.init()
         self.win = pygame.display.set_mode(list(self.size_window))
