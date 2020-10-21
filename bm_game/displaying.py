@@ -1,7 +1,8 @@
 #!python3
 """Display code oto visulize the game in pygame."""
-import numpy as np
+import time
 import pygame
+import numpy as np
 
 
 WHITE = (255, 255, 255)
@@ -39,31 +40,67 @@ class Display:
         self.font = pygame.font.SysFont(None, 24)
 
         self.set_up_level("", None)
+        self.level_won = False
+        self.level_new = False
 
         # Images
         self.images = [
-            pygame.transform.scale(pygame.image.load(
-                "images/spinup.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
-            pygame.transform.scale(pygame.image.load(
-                "images/spindown.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
-            pygame.transform.scale(pygame.image.load(
-                "images/questionmark.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+            [
+                pygame.transform.scale(pygame.image.load(
+                    "images/spinup.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                pygame.transform.scale(pygame.image.load(
+                    "images/spindown.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                pygame.transform.scale(pygame.image.load(
+                    "images/questionmark.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+            ],
+            [
+                pygame.transform.scale(pygame.image.load(
+                    "images/spinup_fix.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                pygame.transform.scale(pygame.image.load(
+                    "images/spindown_fix.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+            ],
         ]
 
-    def update(self, state):
+    def update(self, state, forced):
         """Update the states on the sampled network
 
         Args:
             state: rectangular shaped states numpy array
         """
+        if self.level_won:
+            self.level_won = False
+            self.win.fill(BLACK)
+            self.win.blit(
+                self.font.render("YOU WON THE LEVEL!", True, RED),
+                (2 * PIXEL_PER_SPIN, 4 * PIXEL_PER_SPIN))
+            pygame.display.update()
+            time.sleep(2.0)
+
+        if self.level_new:
+            self.level_new = False
+            self.win.fill(BLACK)
+            self.win.blit(
+                self.font.render("new level, new target", True, RED),
+                (2 * PIXEL_PER_SPIN, 4 * PIXEL_PER_SPIN))
+            self.update_target()
+            pygame.display.update()
+            time.sleep(2)
+
         self.win.fill(BLACK)
-        # draw spins
+        self.update_field(state, forced)
+        self.update_target()
+        pygame.display.update()
+
+    def update_field(self, state, forced):
+        """update spin field part"""
         for x in range(self.size_field[0]):
             for y in range(self.size_field[1]):
-                img = self.images[state[x, y]]
+                img = self.images[forced[x, y]][state[x, y]]
                 self.win.blit(img, (x * PIXEL_PER_SPIN,
                                     y * PIXEL_PER_SPIN))
 
+    def update_target(self):
+        """update target and level number part"""
         offset_x = (self.size_field[0] + 1) * PIXEL_PER_SPIN
         offset_y = PIXEL_PER_SPIN
         self.win.blit(self.level_txt_rendered, (offset_x + 10, 5))
@@ -71,7 +108,7 @@ class Display:
         if self.target is not None:
             for i in range(3):
                 for j in range(3):
-                    img = self.images[self.target[i, j]]
+                    img = self.images[0][self.target[i, j]]
                     self.win.blit(img, (i * PIXEL_PER_SPIN + offset_x,
                                         j * PIXEL_PER_SPIN + offset_y))
 
@@ -80,11 +117,13 @@ class Display:
                               3 * PIXEL_PER_SPIN, 3 * PIXEL_PER_SPIN,),
                              1)
 
-        # update display
-        pygame.display.update()
-
     def set_up_level(self, level_txt, target):
         """at beginning of level save text and target"""
         self.level_txt = level_txt
         self.level_txt_rendered = self.font.render(level_txt, True, RED)
         self.target = target
+        self.level_new = True
+
+    def won_level(self):
+        """keep record if level was won to display message"""
+        self.level_won = True
