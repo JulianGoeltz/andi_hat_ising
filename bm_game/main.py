@@ -1,29 +1,13 @@
 #!/python3
-import sys
-import time
+"""define settings and instantiate game"""
 
-import displaying
-import ising
+import game
 
 
-# X, Y = 20, 10
-N = 10
-
-
-display = displaying.Display(N, N)
-Ising = ising.IsingModel(N, bias=0.)
+N = 8
 
 
 if __name__ == '__main__':
-    print("Starting main loop")
-    iteration = 0
-    while True:
-        iteration += 1
-        # print(f"start of loop {iteration}")
-        states = Ising.get_rectangular_states()
-        display.update(states)
-        Ising.update()
-        time.sleep(1)
+    gm = game.Game(N)
 
-        if iteration == 1000:
-            sys.exit()
+    gm.run()
