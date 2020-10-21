@@ -50,6 +50,7 @@ Testing is done with [nosetest](https://nose.readthedocs.io/en/latest/). For an 
 
 We use a tft touch-screen for the visualization:
 |Type|[2.4inch SPI Module ILI9341 SKU](http://www.lcdwiki.com/2.4inch_SPI_Module_ILI9341_SKU:MSP2402)|
+|-----|-----|
 |Screen|TFT touch-screen|
 |color|RGB 65K|
 |Resolution|320Wx240H|
