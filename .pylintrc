@@ -10,4 +10,6 @@ max-line-length=100
 
 # allow the usage of f-strings in logging
 disable=logging-fstring-interpolation,
-        D212
+        D212,
+	R0902,  # too-many-instance-attributes
+	E0401,  # import-error

@@ -2,9 +2,9 @@
 no_error=true
 
 # only do the following if python files are touched
-if git diff-index --name-only HEAD | grep ".py" -q; then
+if git diff-index --cached --name-only HEAD | grep -P "\.py$" -q; then
 	###### pycodestyle
-	git diff-index --name-only HEAD | grep ".py" | xargs pycodestyle
+	git diff-index --cached --name-only HEAD | grep -P "\.py$" | xargs pycodestyle --max-line-length=100
 	if [[ $? -ne 0 ]]; then
 		no_error=false
 		echo "### Did not pass pycodestyle test."
@@ -18,7 +18,7 @@ if git diff-index --name-only HEAD | grep ".py" -q; then
 	fi
 
 	###### pylint
-	git diff-index --name-only HEAD | grep ".py" | xargs pylint
+	git diff-index --cached --name-only HEAD | grep -P "\.py$" | xargs pylint
 	if [[ $? -ne 0 ]]; then
 		no_error=false
 		echo "### Did not pass pylint test."
