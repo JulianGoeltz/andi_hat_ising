@@ -1,0 +1,32 @@
+#!/bin/bash
+no_error=true
+
+# only do the following if python files are touched
+if git diff-index --name-only HEAD | grep ".py" -q; then
+	###### pycodestyle
+	git diff-index --name-only HEAD | grep ".py" | xargs pycodestyle
+	if [[ $? -ne 0 ]]; then
+		no_error=false
+		echo "### Did not pass pycodestyle test."
+	fi
+
+	###### nosetest
+	nosetests
+	if [[ $? -ne 0 ]]; then
+		no_error=false
+		echo "### Did not pass nosetest test."
+	fi
+
+	###### pylint
+	git diff-index --name-only HEAD | grep ".py" | xargs pylint
+	if [[ $? -ne 0 ]]; then
+		no_error=false
+		echo "### Did not pass pylint test."
+	fi
+
+
+	if ! $no_error; then
+		echo "### make ammendments or commit anyway with '--no-verify'"
+		exit 1
+	fi
+fi

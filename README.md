@@ -42,6 +42,9 @@ nosetests
 4. If you think you are ready, make a pull request on GitHub. Github will automatically run the testing worlflows to detect bugs, check style and to run the tests.
 5. If all is green merge the changes on Github and remove the branch you used for development.
 
+To easily check your current change before committing use the `pre-commit` hook in the root folder.
+For default checking, use `ln -sv ../../.hook_precommit .git/hooks/pre-commit` (possibly make it executable with `chmod u+x .hook_precommit`.
+
 ### Testing
 
 Testing is done with [nosetest](https://nose.readthedocs.io/en/latest/). For an example see the existing tests in the _tests_ folder.
