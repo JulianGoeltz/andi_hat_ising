@@ -8,7 +8,6 @@ import numpy as np
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
-PIXEL_PER_SPIN = 25
 
 
 class Display:
@@ -24,7 +23,7 @@ class Display:
     """
 
     # pylint: disable=C0103
-    def __init__(self, x, y):
+    def __init__(self, x, y, pixel_per_spin):
         """standard display constructor
 
         Args:
@@ -32,6 +31,7 @@ class Display:
             y (int): gamefield size y-axes
         """
         self.size_field = np.array([x, y])
+        self.pixel_per_spin = pixel_per_spin
         self.size_window = 320, 240
 
         pygame.init()
@@ -47,17 +47,17 @@ class Display:
         self.images = [
             [
                 pygame.transform.scale(pygame.image.load(
-                    "images/spinup.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                    "images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
                 pygame.transform.scale(pygame.image.load(
-                    "images/spindown.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                    "images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
                 pygame.transform.scale(pygame.image.load(
-                    "images/questionmark.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                    "images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
             [
                 pygame.transform.scale(pygame.image.load(
-                    "images/spinup_fix.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                    "images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
                 pygame.transform.scale(pygame.image.load(
-                    "images/spindown_fix.png"), (PIXEL_PER_SPIN, PIXEL_PER_SPIN)),
+                    "images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
         ]
 
@@ -71,8 +71,8 @@ class Display:
             self.level_won = False
             self.win.fill(BLACK)
             self.win.blit(
-                self.font.render("YOU WON THE LEVEL!", True, RED),
-                (2 * PIXEL_PER_SPIN, 4 * PIXEL_PER_SPIN))
+                self.font.render("you won the level!", True, RED),
+                (2 * self.pixel_per_spin, 4 * self.pixel_per_spin))
             pygame.display.update()
             time.sleep(2.0)
 
@@ -81,7 +81,7 @@ class Display:
             self.win.fill(BLACK)
             self.win.blit(
                 self.font.render("new level, new target", True, RED),
-                (2 * PIXEL_PER_SPIN, 4 * PIXEL_PER_SPIN))
+                (2 * self.pixel_per_spin, 4 * self.pixel_per_spin))
             self.update_target()
             pygame.display.update()
             time.sleep(2)
@@ -96,25 +96,25 @@ class Display:
         for x in range(self.size_field[0]):
             for y in range(self.size_field[1]):
                 img = self.images[forced[x, y]][state[x, y]]
-                self.win.blit(img, (x * PIXEL_PER_SPIN,
-                                    y * PIXEL_PER_SPIN))
+                self.win.blit(img, (x * self.pixel_per_spin,
+                                    y * self.pixel_per_spin))
 
     def update_target(self):
         """update target and level number part"""
-        offset_x = (self.size_field[0] + 1) * PIXEL_PER_SPIN
-        offset_y = PIXEL_PER_SPIN
+        offset_x = (self.size_field[0] + 1) * self.pixel_per_spin
+        offset_y = self.pixel_per_spin
         self.win.blit(self.level_txt_rendered, (offset_x + 10, 5))
 
         if self.target is not None:
             for i in range(3):
                 for j in range(3):
                     img = self.images[0][self.target[i, j]]
-                    self.win.blit(img, (i * PIXEL_PER_SPIN + offset_x,
-                                        j * PIXEL_PER_SPIN + offset_y))
+                    self.win.blit(img, (i * self.pixel_per_spin + offset_x,
+                                        j * self.pixel_per_spin + offset_y))
 
             pygame.draw.rect(self.win, BLACK,
-                             (*((self.size_field // 2 - 2) * PIXEL_PER_SPIN),
-                              3 * PIXEL_PER_SPIN, 3 * PIXEL_PER_SPIN,),
+                             (*((self.size_field // 2 - 2) * self.pixel_per_spin),
+                              3 * self.pixel_per_spin, 3 * self.pixel_per_spin,),
                              1)
 
     def set_up_level(self, level_txt, target):
