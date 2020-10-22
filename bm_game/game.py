@@ -11,18 +11,20 @@ import ising
 
 class Game:
     """this is where the magic happens: lvl control and general procedure"""
-    def __init__(self, size):
+    def __init__(self, size, pixel_per_spin):
         self.size = size
+        self.pixel_per_spin = pixel_per_spin
         self.levels = [
             [(1, 1, 0), ],
             [(1, 1, 1), ],
             [(0, 1, 0), (1, 1, 0), (2, 1, 0), ],
             [(1, 0, 1), (1, 1, 1), (1, 2, 1), ],
+            [(0, 1, 0), (1, 1, 0), (2, 1, 0), (1, 0, 1), (1, 1, 1), (1, 2, 1), ],
         ]
         self.level_no = 0
 
-        self.display = displaying.Display(size, size)
-        self.ising = ising.IsingModel(size, bias=-2.)
+        self.display = displaying.Display(size, size, pixel_per_spin)
+        self.ising = ising.IsingModel(size, bias=-2., temp=0.7)
 
         # resetting and first display
         self.reset_field()
@@ -47,6 +49,9 @@ class Game:
             sys.exit()
         self.set_up_level()
         self.display.won_level()
+        time.sleep(1)
+        states = self.ising.get_rectangular_states()
+        self.display.update(states, forced=(self.forced_spins > -1))
 
     def reset_field(self):
         """unforce spins"""
@@ -80,9 +85,29 @@ class Game:
             self.force_spins()
             states = self.ising.get_rectangular_states()
             self.display.update(states, forced=(self.forced_spins > -1))
+            displaying.pygame.event.clear()
             self.check_win()
 
-            time.sleep(1)
+            for i in range(10):
+                for event in displaying.pygame.event.get():
+                    if event.type == displaying.pygame.QUIT:
+                        displaying.pygame.quit()
+                        sys.exit()
+                    elif event.type == displaying.pygame.MOUSEBUTTONDOWN:
+                        cox, coy = displaying.pygame.mouse.get_pos()
+                        # the following loops through the values 1, 0, -1
+                        idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
+                        if idx in range(self.size) and idy in range(self.size):
+                            self.forced_spins[idx, idy] %= 3
+                            self.forced_spins[idx, idy] -= 1
+
+                            self.force_spins()
+                            states = self.ising.get_rectangular_states()
+                            self.display.update(states, forced=(self.forced_spins > -1))
+                        else:
+                            print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
+
+                time.sleep(.08 + 0 * i)
 
             if iteration == 1000:
                 sys.exit()
