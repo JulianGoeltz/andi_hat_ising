@@ -97,7 +97,9 @@ class Game:
                         cox, coy = displaying.pygame.mouse.get_pos()
                         # the following loops through the values 1, 0, -1
                         idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
-                        if idx in range(self.size) and idy in range(self.size):
+                        if idx in range(self.size) and idy in range(self.size) and not (
+                            idx in range(2, 5) and idy in range(2, 5)
+                        ):
                             self.forced_spins[idx, idy] %= 3
                             self.forced_spins[idx, idy] -= 1
 
