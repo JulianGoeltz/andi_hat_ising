@@ -7,6 +7,7 @@ import os
 from PIL import Image
 from datetime import datetime
 import digitalio
+import busio
 from board import SCK, MOSI, MISO, D24, D25, CE0
 from adafruit_rgb_display import color565
 import adafruit_rgb_display.ili9341 as ili9341
@@ -124,8 +125,8 @@ class Display:
         strFormat = 'RGB'
         raw_str = pygame.image.tostring(self.win, strFormat, False)
         image = Image.frombytes(strFormat, self.win.get_size(), raw_str)
-        image.save(f"out/{datetime.now()}.png", "PNG")
-        disply.image('RGB')
+        image = image.transpose(Image.ROTATE_90)
+        self.hw_display.image(image)
 
     def update_field(self, state, forced):
         """update spin field part"""
