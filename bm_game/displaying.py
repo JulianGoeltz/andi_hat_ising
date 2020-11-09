@@ -3,6 +3,9 @@
 import time
 import pygame
 import numpy as np
+import os
+from PIL import Image
+from datetime import datetime
 
 
 WHITE = (255, 255, 255)
@@ -30,6 +33,9 @@ class Display:
             x (int): gamefield size x-axes
             y (int): gamefield size y-axes
         """
+        if not os.path.exists("out"):
+            os.makedirs('out')
+
         self.size_field = np.array([x, y])
         self.pixel_per_spin = pixel_per_spin
         self.size_window = 320, 240
@@ -90,6 +96,10 @@ class Display:
         self.update_field(state, forced)
         self.update_target()
         pygame.display.update()
+        strFormat = 'RGBA'
+        raw_str = pygame.image.tostring(self.win, strFormat, False)
+        image = Image.frombytes(strFormat, self.win.get_size(), raw_str)
+        image.save(f"out/{datetime.now()}.png", "PNG")
 
     def update_field(self, state, forced):
         """update spin field part"""
