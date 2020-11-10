@@ -33,7 +33,7 @@ class Game:
         self.display = displaying.Display(size, size, pixel_per_spin)
         self.ising = ising.IsingModel(size, bias=-2., temp=0.7)
         self.touch_input = TouchInput()
-        self.x_lim = self.ylim = size * pixel_per_spin
+        self.x_lim = self.y_lim = size * pixel_per_spin
 
         # resetting and first display
         self.reset_field()
@@ -97,7 +97,7 @@ class Game:
             displaying.pygame.event.clear()
             self.check_win()
 
-            for i in range(10):
+            for i in range(1):
                 for event in displaying.pygame.event.get():
                     if event.type == displaying.pygame.QUIT:
                         displaying.pygame.quit()
@@ -108,7 +108,7 @@ class Game:
                                                 self.y_lim)
                 if (x_touch is not None):
                     #cox, coy = displaying.pygame.mouse.get_pos()
-                    cox, coy = x_touch, y_touch
+                    cox, coy = y_touch, x_touch
                     # the following loops through the values 1, 0, -1
                     idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
                     if idx in range(self.size) and idy in range(self.size) and not (
