@@ -4,9 +4,9 @@
 import sys
 import time
 import numpy as np
-
 import displaying
 import ising
+from touchscreen import TouchInput
 
 
 class Game:
@@ -32,6 +32,8 @@ class Game:
 
         self.display = displaying.Display(size, size, pixel_per_spin)
         self.ising = ising.IsingModel(size, bias=-2., temp=0.7)
+        self.touch_input = TouchInput()
+        self.x_lim = self.ylim = size * pixel_per_spin
 
         # resetting and first display
         self.reset_field()
@@ -100,8 +102,13 @@ class Game:
                     if event.type == displaying.pygame.QUIT:
                         displaying.pygame.quit()
                         sys.exit()
-                    elif event.type == displaying.pygame.MOUSEBUTTONDOWN:
-                        cox, coy = displaying.pygame.mouse.get_pos()
+                    # measure touch
+                    x_touch, y_touch = self.touch_input.get_touch_input(
+                                                    self.x_lim,
+                                                    self.y_lim)
+                    elif x_touch is not None:
+                        #cox, coy = displaying.pygame.mouse.get_pos()
+                        cox, coy = x_touch, y_touch
                         # the following loops through the values 1, 0, -1
                         idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
                         if idx in range(self.size) and idy in range(self.size) and not (
