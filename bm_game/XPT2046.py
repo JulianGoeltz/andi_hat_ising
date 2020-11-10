@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from SPIManager import SPIManager
+from bm_game.SPIManager import SPIManager
 
 class XPT2046(object):
 	

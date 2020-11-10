@@ -4,9 +4,9 @@
 import sys
 import time
 import numpy as np
-import displaying
-import ising
-from touchscreen import TouchInput
+import bm_game.displaying as displaying
+import bm_game.ising as ising
+from bm_game.touchscreen import TouchInput
 
 
 class Game:

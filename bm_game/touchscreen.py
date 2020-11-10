@@ -1,6 +1,6 @@
 import time
 from sys import stdout
-from XPT2046 import XPT2046
+from bm_game.XPT2046 import XPT2046
 
 # calibration constants
 Y_AT_ZERO = 400

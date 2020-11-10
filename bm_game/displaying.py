@@ -74,20 +74,16 @@ class Display:
         self.level_new = False
 
         # Images
+        dir_path = os.path.dirname(os.path.realpath(__file__)) 
         self.images = [
             [
-                pygame.transform.scale(pygame.image.load(
-                    "images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
             [
-                pygame.transform.scale(pygame.image.load(
-                    "images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
         ]
 

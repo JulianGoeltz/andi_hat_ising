@@ -19,6 +19,6 @@ setup(name='bm_game',
       },
       license="GNUv3",
       install_requires=["numpy"],
-      package_data={},
+      package_data={"bm_game": ["bm_game/images"]},
       include_package_data=True
       )

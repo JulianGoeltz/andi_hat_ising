@@ -1,7 +1,7 @@
 #!/python3
 """define settings and instantiate game"""
 
-import game
+import bm_game.game as game
 
 
 N = 8
