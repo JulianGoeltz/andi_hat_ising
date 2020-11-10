@@ -106,7 +106,7 @@ class Game:
                     x_touch, y_touch = self.touch_input.get_touch_input(
                                                     self.x_lim,
                                                     self.y_lim)
-                    elif x_touch is not None:
+                    if (x_touch is not None):
                         #cox, coy = displaying.pygame.mouse.get_pos()
                         cox, coy = x_touch, y_touch
                         # the following loops through the values 1, 0, -1
