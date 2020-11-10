@@ -124,8 +124,13 @@ class Display:
         
         strFormat = 'RGB'
         raw_str = pygame.image.tostring(self.win, strFormat, False)
+        #print(self.win.get_size())
         image = Image.frombytes(strFormat, self.win.get_size(), raw_str)
+        #print(image.size)
+        image = image.resize((320, 240), box = (0,0,320, 240))
         image = image.transpose(Image.ROTATE_90)
+        #image.save(f'out/{datetime.now()}.png')
+        #print(image.size)
         self.hw_display.image(image)
 
     def update_field(self, state, forced):
