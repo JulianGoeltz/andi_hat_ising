@@ -102,26 +102,26 @@ class Game:
                     if event.type == displaying.pygame.QUIT:
                         displaying.pygame.quit()
                         sys.exit()
-                    # measure touch
-                    x_touch, y_touch = self.touch_input.get_touch_input(
-                                                    self.x_lim,
-                                                    self.y_lim)
-                    if (x_touch is not None):
-                        #cox, coy = displaying.pygame.mouse.get_pos()
-                        cox, coy = x_touch, y_touch
-                        # the following loops through the values 1, 0, -1
-                        idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
-                        if idx in range(self.size) and idy in range(self.size) and not (
-                            idx in range(2, 5) and idy in range(2, 5)
-                        ):
-                            self.forced_spins[idx, idy] %= 3
-                            self.forced_spins[idx, idy] -= 1
+                # measure touch
+                x_touch, y_touch = self.touch_input.get_touch_input(
+                                                self.x_lim,
+                                                self.y_lim)
+                if (x_touch is not None):
+                    #cox, coy = displaying.pygame.mouse.get_pos()
+                    cox, coy = x_touch, y_touch
+                    # the following loops through the values 1, 0, -1
+                    idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
+                    if idx in range(self.size) and idy in range(self.size) and not (
+                        idx in range(2, 5) and idy in range(2, 5)
+                    ):
+                        self.forced_spins[idx, idy] %= 3
+                        self.forced_spins[idx, idy] -= 1
 
-                            self.force_spins()
-                            states = self.ising.get_rectangular_states()
-                            self.display.update(states, forced=(self.forced_spins > -1))
-                        else:
-                            print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
+                        self.force_spins()
+                        states = self.ising.get_rectangular_states()
+                        self.display.update(states, forced=(self.forced_spins > -1))
+                    else:
+                        print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
 
                 time.sleep(.08 + 0 * i)
 
