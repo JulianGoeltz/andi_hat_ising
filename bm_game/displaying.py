@@ -3,11 +3,28 @@
 import time
 import pygame
 import numpy as np
+import os
+from PIL import Image
+from datetime import datetime
+import digitalio
+import busio
+from board import SCK, MOSI, MISO, D24, D25, CE0
+from adafruit_rgb_display import color565
+import adafruit_rgb_display.ili9341 as ili9341
 
 
+# set up the colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+
+# set up the hardware-dispaly related variables
+CS_PIN = CE0
+DC_PIN = D25
+RST_PIN = D24
+HW_SPI = busio.SPI(clock=SCK, MOSI=MOSI, MISO=MISO)
+WIDTH = 240
+HEIGHT = 320
 
 
 class Display:
@@ -30,6 +47,19 @@ class Display:
             x (int): gamefield size x-axes
             y (int): gamefield size y-axes
         """
+        if not os.path.exists("out"):
+            os.makedirs('out')
+
+        # hardware display
+        self.hw_display = ili9341.ILI9341(
+                                HW_SPI,
+                                width=WIDTH,
+                                height=HEIGHT,
+                                baudrate=30000000,
+                                cs=digitalio.DigitalInOut(CS_PIN),
+                                dc=digitalio.DigitalInOut(DC_PIN),
+                                rst=digitalio.DigitalInOut(RST_PIN))
+
         self.size_field = np.array([x, y])
         self.pixel_per_spin = pixel_per_spin
         self.size_window = 320, 240
@@ -44,20 +74,16 @@ class Display:
         self.level_new = False
 
         # Images
+        dir_path = os.path.dirname(os.path.realpath(__file__)) 
         self.images = [
             [
-                pygame.transform.scale(pygame.image.load(
-                    "images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
             [
-                pygame.transform.scale(pygame.image.load(
-                    "images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(
-                    "images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
             ],
         ]
 
@@ -90,6 +116,18 @@ class Display:
         self.update_field(state, forced)
         self.update_target()
         pygame.display.update()
+
+        
+        strFormat = 'RGB'
+        raw_str = pygame.image.tostring(self.win, strFormat, False)
+        #print(self.win.get_size())
+        image = Image.frombytes(strFormat, self.win.get_size(), raw_str)
+        #print(image.size)
+        image = image.resize((320, 240), box = (0,0,320, 240))
+        image = image.transpose(Image.ROTATE_90)
+        #image.save(f'out/{datetime.now()}.png')
+        #print(image.size)
+        self.hw_display.image(image)
 
     def update_field(self, state, forced):
         """update spin field part"""

@@ -4,9 +4,9 @@
 import sys
 import time
 import numpy as np
-
-import displaying
-import ising
+import bm_game.displaying as displaying
+import bm_game.ising as ising
+from bm_game.touchscreen import TouchInput
 
 
 class Game:
@@ -32,6 +32,8 @@ class Game:
 
         self.display = displaying.Display(size, size, pixel_per_spin)
         self.ising = ising.IsingModel(size, bias=-2., temp=0.7)
+        self.touch_input = TouchInput()
+        self.x_lim = self.y_lim = size * pixel_per_spin
 
         # resetting and first display
         self.reset_field()
@@ -95,26 +97,31 @@ class Game:
             displaying.pygame.event.clear()
             self.check_win()
 
-            for i in range(10):
+            for i in range(1):
                 for event in displaying.pygame.event.get():
                     if event.type == displaying.pygame.QUIT:
                         displaying.pygame.quit()
                         sys.exit()
-                    elif event.type == displaying.pygame.MOUSEBUTTONDOWN:
-                        cox, coy = displaying.pygame.mouse.get_pos()
-                        # the following loops through the values 1, 0, -1
-                        idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
-                        if idx in range(self.size) and idy in range(self.size) and not (
-                            idx in range(2, 5) and idy in range(2, 5)
-                        ):
-                            self.forced_spins[idx, idy] %= 3
-                            self.forced_spins[idx, idy] -= 1
+                # measure touch
+                x_touch, y_touch = self.touch_input.get_touch_input(
+                                                self.x_lim,
+                                                self.y_lim)
+                if (x_touch is not None):
+                    #cox, coy = displaying.pygame.mouse.get_pos()
+                    cox, coy = y_touch, x_touch
+                    # the following loops through the values 1, 0, -1
+                    idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
+                    if idx in range(self.size) and idy in range(self.size) and not (
+                        idx in range(2, 5) and idy in range(2, 5)
+                    ):
+                        self.forced_spins[idx, idy] %= 3
+                        self.forced_spins[idx, idy] -= 1
 
-                            self.force_spins()
-                            states = self.ising.get_rectangular_states()
-                            self.display.update(states, forced=(self.forced_spins > -1))
-                        else:
-                            print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
+                        self.force_spins()
+                        states = self.ising.get_rectangular_states()
+                        self.display.update(states, forced=(self.forced_spins > -1))
+                    else:
+                        print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
 
                 time.sleep(.08 + 0 * i)
 
