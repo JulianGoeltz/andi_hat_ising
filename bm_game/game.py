@@ -11,6 +11,7 @@ from bm_game.touchscreen import TouchInput
 
 class Game:
     """this is where the magic happens: lvl control and general procedure"""
+
     def __init__(self, size, pixel_per_spin):
         self.size = size
         self.pixel_per_spin = pixel_per_spin
@@ -26,7 +27,8 @@ class Game:
             [(i // 3, i % 3, i // 3 < i % 3) for i in range(9)],
             [(i // 3, i % 3, i // 3 == i % 3) for i in range(9)],
             [(i // 3, i % 3, i // 3 != i % 3) for i in range(9)],
-            [(0, 1, 0), (1, 1, 0), (2, 1, 0), (1, 0, 1), (1, 1, 1), (1, 2, 1), ],
+            [(0, 1, 0), (1, 1, 0), (2, 1, 0),
+             (1, 0, 1), (1, 1, 1), (1, 2, 1), ],
         ]
         self.level_no = 0
 
@@ -44,12 +46,14 @@ class Game:
 
     def check_win(self):
         """determine whether target satisfied, if so upgrade lvl"""
-        to_check = self.ising.get_rectangular_states()[self.size // 2 - 2:, self.size // 2 - 2:]
+        to_check = self.ising.get_rectangular_states(
+        )[self.size // 2 - 2:, self.size // 2 - 2:]
         to_check = to_check[:3, :3]
         # print(self.ising.get_rectangular_states())
         # print(to_check)
         # time.sleep(400)
-        winning = np.all(to_check[self.target > -1] == self.target[self.target > -1])
+        winning = np.all(to_check[self.target > -1] ==
+                         self.target[self.target > -1])
         if not winning:
             return
         self.level_no += 1
@@ -104,14 +108,16 @@ class Game:
                         sys.exit()
                 # measure touch
                 x_touch, y_touch = self.touch_input.get_touch_input(
-                                                self.x_lim,
-                                                self.y_lim)
+                    self.x_lim,
+                    self.y_lim)
                 if (x_touch is not None):
-                    #cox, coy = displaying.pygame.mouse.get_pos()
+                    # cox, coy = displaying.pygame.mouse.get_pos()
                     cox, coy = y_touch, x_touch
                     # the following loops through the values 1, 0, -1
-                    idx, idy = cox // self.pixel_per_spin, coy // self.pixel_per_spin
-                    if idx in range(self.size) and idy in range(self.size) and not (
+                    idx, idy = cox // self.pixel_per_spin, coy //\
+                        self.pixel_per_spin
+                    if idx in range(self.size) and idy in range(self.size)\
+                        and not (
                         idx in range(2, 5) and idy in range(2, 5)
                     ):
                         self.forced_spins[idx, idy] %= 3
@@ -119,9 +125,11 @@ class Game:
 
                         self.force_spins()
                         states = self.ising.get_rectangular_states()
-                        self.display.update(states, forced=(self.forced_spins > -1))
+                        self.display.update(
+                            states, forced=(self.forced_spins > -1))
                     else:
-                        print(f"from xy{cox}{coy} followed idxy{idx}{idy}, but doesnt exit")
+                        print(f"from xy{cox}{coy} followed idxy{idx}{idy},"
+                              " but doesnt exit")
 
                 time.sleep(.08 + 0 * i)
 

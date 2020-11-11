@@ -17,14 +17,16 @@ def create_connection_matrix(size: int):
             unit_index = row * size + col
 
             # neigbors in the row
-            nr_left = (unit_index + size - 1) if (col == 0) else (unit_index - 1)
-            nr_right = (unit_index - size + 1) if (col ==
-                                                   size-1) else (unit_index + 1)
+            nr_left = (unit_index + size - 1) if \
+                (col == 0) else (unit_index - 1)
+            nr_right = (unit_index - size + 1) if \
+                (col == size-1) else (unit_index + 1)
 
             # neighbors in the column
-            nc_up = (unit_index + (size-1)*size) if (row == 0) else (unit_index - size)
-            nc_down = (unit_index - (size-1)*size) if (row ==
-                                                       (size-1)) else (unit_index + size)
+            nc_up = (unit_index + (size-1)*size) if \
+                (row == 0) else (unit_index - size)
+            nc_down = (unit_index - (size-1)*size) if \
+                (row == (size-1)) else (unit_index + size)
 
             # set the connections to one
             weights[unit_index, [nr_left, nr_right, nc_up, nc_down]] = 1

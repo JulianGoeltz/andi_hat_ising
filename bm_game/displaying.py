@@ -52,13 +52,13 @@ class Display:
 
         # hardware display
         self.hw_display = ili9341.ILI9341(
-                                HW_SPI,
-                                width=WIDTH,
-                                height=HEIGHT,
-                                baudrate=30000000,
-                                cs=digitalio.DigitalInOut(CS_PIN),
-                                dc=digitalio.DigitalInOut(DC_PIN),
-                                rst=digitalio.DigitalInOut(RST_PIN))
+            HW_SPI,
+            width=WIDTH,
+            height=HEIGHT,
+            baudrate=30000000,
+            cs=digitalio.DigitalInOut(CS_PIN),
+            dc=digitalio.DigitalInOut(DC_PIN),
+            rst=digitalio.DigitalInOut(RST_PIN))
 
         self.size_field = np.array([x, y])
         self.pixel_per_spin = pixel_per_spin
@@ -74,16 +74,26 @@ class Display:
         self.level_new = False
 
         # Images
-        dir_path = os.path.dirname(os.path.realpath(__file__)) 
+        dir_path = os.path.dirname(os.path.realpath(__file__))
         self.images = [
             [
-                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/questionmark.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(
+                    pygame.image.load(f"{dir_path}/images/spinup.png"),
+                    (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(
+                    pygame.image.load(f"{dir_path}/images/spindown.png"),
+                    (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(
+                    pygame.image.load(f"{dir_path}/images/questionmark.png"),
+                    (self.pixel_per_spin, self.pixel_per_spin)),
             ],
             [
-                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spinup_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
-                pygame.transform.scale(pygame.image.load(f"{dir_path}/images/spindown_fix.png"), (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(
+                    pygame.image.load(f"{dir_path}/images/spinup_fix.png"),
+                    (self.pixel_per_spin, self.pixel_per_spin)),
+                pygame.transform.scale(
+                    pygame.image.load(f"{dir_path}/images/spindown_fix.png"),
+                    (self.pixel_per_spin, self.pixel_per_spin)),
             ],
         ]
 
@@ -117,16 +127,15 @@ class Display:
         self.update_target()
         pygame.display.update()
 
-        
         strFormat = 'RGB'
         raw_str = pygame.image.tostring(self.win, strFormat, False)
-        #print(self.win.get_size())
+        # print(self.win.get_size())
         image = Image.frombytes(strFormat, self.win.get_size(), raw_str)
-        #print(image.size)
-        image = image.resize((320, 240), box = (0,0,320, 240))
+        # print(image.size)
+        image = image.resize((320, 240), box=(0, 0, 320, 240))
         image = image.transpose(Image.ROTATE_90)
-        #image.save(f'out/{datetime.now()}.png')
-        #print(image.size)
+        # image.save(f'out/{datetime.now()}.png')
+        # print(image.size)
         self.hw_display.image(image)
 
     def update_field(self, state, forced):
@@ -150,10 +159,11 @@ class Display:
                     self.win.blit(img, (i * self.pixel_per_spin + offset_x,
                                         j * self.pixel_per_spin + offset_y))
 
-            pygame.draw.rect(self.win, BLACK,
-                             (*((self.size_field // 2 - 2) * self.pixel_per_spin),
-                              3 * self.pixel_per_spin, 3 * self.pixel_per_spin,),
-                             1)
+            pygame.draw.rect(
+                self.win, BLACK,
+                (*((self.size_field // 2 - 2) * self.pixel_per_spin),
+                 3 * self.pixel_per_spin, 3 * self.pixel_per_spin,),
+                1)
 
     def set_up_level(self, level_txt, target):
         """at beginning of level save text and target"""

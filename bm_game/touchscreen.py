@@ -5,8 +5,9 @@ from bm_game.XPT2046 import XPT2046
 # calibration constants
 Y_AT_ZERO = 400
 Y_AT_FULL = 2640
-X_AT_ZERO = 3850 # x is flipped
+X_AT_ZERO = 3850  # x is flipped
 X_AT_FULL = 805
+
 
 class TouchInput():
     """Class to handle the touchscreen input"""
@@ -26,7 +27,7 @@ class TouchInput():
 
         # first check if the preassure is sensible
         print('Called for measurement')
-        preassure = round(self.xpt2046.readTouchPressure(),2)
+        preassure = round(self.xpt2046.readTouchPressure(), 2)
         if preassure < 0.2 or preassure > 800.0:
             # this is no touch
             return None, None
@@ -42,4 +43,3 @@ class TouchInput():
         print(f'The scaled data: x: {x_scaled}, y:{y_scaled}')
 
         return x_scaled, y_scaled
-
