@@ -15,101 +15,101 @@
 import RPi.GPIO as GPIO
 import time
 
+
 class SPIManager(object):
-	
-	SPI_MOSI = 27
-	SPI_MISO = 22
-	SPI_SCLK = 23
-	SPI_CE0 = 18
-		
-	def __init__(self):
-		self.SPISetupGPIO();
-	
-	def SPISetupGPIO(self):
-		GPIO.setmode(GPIO.BCM)
-	
-		GPIO.setup(SPIManager.SPI_MOSI, GPIO.OUT)
-		GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
-	
-		GPIO.setup(SPIManager.SPI_MISO, GPIO.IN)
-	
-		GPIO.setup(SPIManager.SPI_SCLK, GPIO.OUT)
-		GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
-	
-		GPIO.setup(SPIManager.SPI_CE0, GPIO.OUT)
-		GPIO.output(SPIManager.SPI_CE0, GPIO.HIGH)
-	
-	
-	def SPISelect(self):
-		GPIO.output(SPIManager.SPI_CE0, GPIO.LOW)
-		
-	def SPIUnSelect(self):
-		GPIO.output(SPIManager.SPI_CE0, GPIO.HIGH)
-	
-	def SPIPulseClock(self):		
-		GPIO.output(SPIManager.SPI_SCLK, GPIO.HIGH)	
-		GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
-		
-	def SPISend(self, data):
-		currentMOSIstate = False
-		
-		for i in range (len(data)):
-			byteToSend = data[i]
-			for j in range (8):
 
-				desiredState = False
-				if (byteToSend & 0x80) > 0 :
-					desiredState = True
+    SPI_MOSI = 27
+    SPI_MISO = 22
+    SPI_SCLK = 23
+    SPI_CE0 = 18
 
-				if desiredState == True and currentMOSIstate == False :	
-					GPIO.output(SPIManager.SPI_MOSI, GPIO.HIGH)
-					currentMOSIstate = True
-				elif desiredState == False and currentMOSIstate == True :
-					GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
-					currentMOSIstate = False
-				
-				# Pulse the clock.
-				self.SPIPulseClock()
+    def __init__(self):
+        self.SPISetupGPIO()
 
-				# Shift to the next bit.
-				byteToSend <<= 1;
-		if currentMOSIstate == True :
-			GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
+    def SPISetupGPIO(self):
+        GPIO.setmode(GPIO.BCM)
 
-		
-	def SPIReceive(self, numBits):
-		numBytes = (numBits + 7) // 8
+        GPIO.setup(SPIManager.SPI_MOSI, GPIO.OUT)
+        GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
 
-		buffer = bytearray()
+        GPIO.setup(SPIManager.SPI_MISO, GPIO.IN)
 
-		# Array is filled in received byte order.
-		# Any padding bits are the least significant bits, of the last byte.
+        GPIO.setup(SPIManager.SPI_SCLK, GPIO.OUT)
+        GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
 
-		currentBit = 0;
-		for i in range (numBytes):
-			receiveByte = 0x00
-			for j in range(8):
-				# Shift to the next bit.
-				receiveByte <<= 1
+        GPIO.setup(SPIManager.SPI_CE0, GPIO.OUT)
+        GPIO.output(SPIManager.SPI_CE0, GPIO.HIGH)
 
-				# Skip padding bits
-				currentBit += 1				
-				if currentBit > numBits:
-					continue
+    def SPISelect(self):
+        GPIO.output(SPIManager.SPI_CE0, GPIO.LOW)
 
-				# Set the clock high.
-				GPIO.output(SPIManager.SPI_SCLK, GPIO.HIGH)
+    def SPIUnSelect(self):
+        GPIO.output(SPIManager.SPI_CE0, GPIO.HIGH)
 
-				# Read the value.
-				bit = GPIO.input(SPIManager.SPI_MISO)
+    def SPIPulseClock(self):
+        GPIO.output(SPIManager.SPI_SCLK, GPIO.HIGH)
+        GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
 
-				# Set the clock low.
-				GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
-				
-				# Set the received bit.
-				if bit == True : 
-					receiveByte |= 1
-				
-			buffer.append(receiveByte)
+    def SPISend(self, data):
+        currentMOSIstate = False
 
-		return buffer;
+        for i in range(len(data)):
+            byteToSend = data[i]
+            for j in range(8):
+
+                desiredState = False
+                if (byteToSend & 0x80) > 0:
+                    desiredState = True
+
+                # noqa: E712
+                if desiredState == True and currentMOSIstate == False:
+                    GPIO.output(SPIManager.SPI_MOSI, GPIO.HIGH)
+                    currentMOSIstate = True
+                elif desiredState == False and currentMOSIstate == True:
+                    GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
+                    currentMOSIstate = False
+
+                # Pulse the clock.
+                self.SPIPulseClock()
+
+                # Shift to the next bit.
+                byteToSend <<= 1
+        if currentMOSIstate == True:
+            GPIO.output(SPIManager.SPI_MOSI, GPIO.LOW)
+
+    def SPIReceive(self, numBits):
+        numBytes = (numBits + 7) // 8
+
+        buffer = bytearray()
+
+        # Array is filled in received byte order.
+        # Any padding bits are the least significant bits, of the last byte.
+
+        currentBit = 0
+        for i in range(numBytes):
+            receiveByte = 0x00
+            for j in range(8):
+                # Shift to the next bit.
+                receiveByte <<= 1
+
+                # Skip padding bits
+                currentBit += 1
+                if currentBit > numBits:
+                    continue
+
+                # Set the clock high.
+                GPIO.output(SPIManager.SPI_SCLK, GPIO.HIGH)
+
+                # Read the value.
+                bit = GPIO.input(SPIManager.SPI_MISO)
+
+                # Set the clock low.
+                GPIO.output(SPIManager.SPI_SCLK, GPIO.LOW)
+
+                # Set the received bit.
+                if bit == True:
+                    receiveByte |= 1
+
+            buffer.append(receiveByte)
+
+        return buffer
